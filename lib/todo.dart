@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/helper/card.dart';
+import 'package:todo/helper/rename.dart';
 import 'package:todo/provider/todo/todo_pages.dart';
+import 'package:todo/provider/todo/todo_provider.dart';
 
 class Todo extends ConsumerStatefulWidget {
   const Todo({super.key, required this.index});
@@ -24,19 +26,19 @@ class _TodoState extends ConsumerState<Todo> {
             children: [
               TextButton(
                 onPressed: () {
-                  // TODO: Rename List
+                  renameListName(context, ref, listId);
                 },
                 child: const Text('Rename List'),
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed:
-                    listId ==
-                        'default' //TODO:change logic of deleting all completed tasks
-                    ? null
-                    : () {
-                        // TODO:Delete all completed tasks
-                      },
+                onPressed: () {
+                  ref
+                      .watch(todoProviderProvider.notifier)
+                      .clearCompleted(listId);
+
+                  Navigator.pop(context);
+                },
                 style: ButtonStyle(
                   foregroundColor: WidgetStateProperty.resolveWith<Color>((
                     states,
@@ -56,7 +58,11 @@ class _TodoState extends ConsumerState<Todo> {
                 onPressed: listId == 'default'
                     ? null
                     : () {
-                        // TODO: Delete List
+                        ref
+                            .watch(todoPageNotifierProvider.notifier)
+                            .removeList(listId);
+
+                        Navigator.pop(context);
                       },
                 style: ButtonStyle(
                   foregroundColor: WidgetStateProperty.resolveWith<Color>((
@@ -116,7 +122,7 @@ class _TodoState extends ConsumerState<Todo> {
                         ),
                       ],
                     ),
-                    Text(tabInfo.id),
+                    Text(tabInfo.id), //TODO: show TODOs
                   ],
                 ),
               ),

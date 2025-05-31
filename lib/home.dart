@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo/helper/add_todo.dart';
 import 'package:todo/provider/theme/theme_provider.dart';
 import 'package:todo/provider/todo/todo_pages.dart';
 import 'package:todo/todo.dart';
@@ -136,39 +137,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  width: 1,
-                  color: Theme.of(context).dividerColor,
+          preferredSize: Size.fromHeight(48), // Slightly smaller
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.infinity, // ensures full width
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      width: 1,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                  ), // optional spacing
+                  child: Row(
+                    children: [
+                      buildTab(icon: Icons.star, index: 0),
+                      for (int i = 0; i < tabs.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: buildTab(title: tabs[i].title, index: i + 1),
+                        ),
+                      IconButton(
+                        onPressed: _onAddPressed,
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.zero,
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: buildTab(icon: Icons.star, index: 0),
-                  ),
-                  for (int i = 0; i < tabs.length; i++)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6),
-                      child: buildTab(title: tabs[i].title, index: i + 1),
-                    ),
-                  IconButton(
-                    onPressed: _onAddPressed,
-                    icon: const Icon(Icons.add),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
         ),
       ),
@@ -182,7 +186,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //TODO:adding task
+          addTodo(context, ref);
         },
         child: Icon(Icons.add),
       ),
